@@ -16,26 +16,18 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
     "Stroke": false,
     "Ischemic Heart Disease": false,
     "Thyroid": false,
-    "Arthritis": false,
-    "Seronegative Spondyloarthropathy": false,
+    "Rheumatoid Arthritis": false,
     "Ankylosing Spondylitis": false,
     "Osteoporosis": false,
-    "Chronic Obstructive Pulmonary Disease": false,
-    "Carpal Tunnel Syndrome": false,
   };
-
-  // Others in Co-Morbid Conditions
-  String smoking = "No";
-  String alcohol = "No";
-  String addictions = "";
 
   // Constitutional Symptoms
   final Map<String, bool> constitutionalSymptoms = {
-    "Significant Weight Loss": false,
-    "Anorexia": false,
+    "Anorexia (Loss of appetite)": false,
     "Fever": false,
     "Generalized Weakness": false,
     "Night Pain": false,
+    "Significant Weight Loss": false,
   };
 
   // Trauma History
@@ -47,39 +39,20 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
     "Fall": false,
   };
 
-  // History of Medications
-  final Map<String, bool> medicationHistory = {
-    "Cancer": false,
-    "Osteoporosis": false,
-    "Steroids": false,
-    "Arthritis": false,
-  };
-
   // Past History
   final Map<String, bool> procedures = {
-    "SNRB": false,
-    "RFA": false,
-    "Facet Cyst Ruptures": false,
+    "SNRB (Root Block)": false,
   };
 
   final Map<String, bool> spineSurgeries = {
-    "C-Spine": false,
-    "L-Spine": false,
+    "Spine Surgeries": false,
   };
   String otherSpineSurgeries = "";
 
   // Red Flag Questions
   bool bowelBladderIncontinence = false;
-  final Map<String, bool> psychologicalStatus = {
-    "Anxiety": false,
-    "Depression": false,
-    "Insomnia": false,
-  };
-
-  final Map<String, String> redFlags = {
-    "Limb Movement": "No",
-    "Severe Pain": "No",
-  };
+  bool isWeaknessInLimb = false;
+  bool unbearablePain = false;
 
   @override
   Widget build(BuildContext context) {
@@ -91,62 +64,43 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
           children: [
             _buildSectionTitle("1. Co-Morbid Conditions"),
             ..._buildCheckboxList(coMorbidConditions),
-            _buildSubheader("Others"),
-            _buildDropdown("Smoking", ["No", "Occasional", "Regular"], smoking,
-                (value) {
-              setState(() {
-                smoking = value!;
-              });
-            }),
-            _buildDropdown("Alcohol", ["No", "Occasional", "Regular"], alcohol,
-                (value) {
-              setState(() {
-                alcohol = value!;
-              });
-            }),
-            _buildTextField("Other Addictions", (value) {
-              setState(() {
-                addictions = value!;
-              });
-            }),
             _buildSectionTitle("2. Constitutional Symptoms"),
             ..._buildCheckboxList(constitutionalSymptoms),
+            const Padding(
+              padding: EdgeInsets.only(left: 16.0),
+              child: Text(
+                "Loss of 10kgs in less than equal to 3 months",
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+              ),
+            ),
             _buildSectionTitle("3. Trauma"),
             ..._buildCheckboxList(traumaHistory),
-            _buildSectionTitle("4. History of Medications"),
-            ..._buildCheckboxList(medicationHistory),
             _buildSectionTitle("5. Past History"),
             _buildSubheader("a. Procedures"),
             ..._buildCheckboxList(procedures),
             _buildSubheader("b. Surgeries"),
             ..._buildCheckboxList(spineSurgeries),
-            _buildTextField("Other Spine Surgeries", (value) {
+            _buildTextField("Other Surgeries", (value) {
               setState(() {
                 otherSpineSurgeries = value!;
               });
             }),
             _buildSectionTitle("6. Red Flag Questions"),
-            _buildCheckbox(
-                "Bowel and Bladder Incontinence", bowelBladderIncontinence,
-                (value) {
+            _buildCheckbox("Bowel and Bladder Incontinence (Loss of Control)",
+                bowelBladderIncontinence, (value) {
               setState(() {
                 bowelBladderIncontinence = value!;
               });
             }),
-            _buildSectionTitle("a. Psychological Status"),
-            ..._buildCheckboxList(psychologicalStatus),
-            _buildSectionTitle("b. Additional Red Flags"),
-            _buildDropdown(
-                "Limb Movement", ["No", "Yes"], redFlags["Limb Movement"]!,
+            _buildCheckbox("Is Weakness in the Limb", isWeaknessInLimb,
                 (value) {
               setState(() {
-                redFlags["Limb Movement"] = value!;
+                isWeaknessInLimb = value!;
               });
             }),
-            _buildDropdown("Severe Pain", ["No", "Mild", "Moderate", "Severe"],
-                redFlags["Severe Pain"]!, (value) {
+            _buildCheckbox("Unbearable Pain", unbearablePain, (value) {
               setState(() {
-                redFlags["Severe Pain"] = value!;
+                unbearablePain = value!;
               });
             }),
             const SizedBox(height: 20),
@@ -201,21 +155,6 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
     }).toList();
   }
 
-  Widget _buildDropdown(String label, List<String> options, String currentValue,
-      ValueChanged<String?> onChanged) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(labelText: label),
-      value: currentValue,
-      items: options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Text(option),
-        );
-      }).toList(),
-      onChanged: onChanged,
-    );
-  }
-
   Widget _buildTextField(String label, ValueChanged<String?> onChanged) {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
@@ -227,23 +166,16 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
     // Compile all collected information
     final generalConditionData = {
       "Co-Morbid Conditions": coMorbidConditions,
-      "Others": {
-        "Smoking": smoking,
-        "Alcohol": alcohol,
-        "Addictions": addictions,
-      },
       "Constitutional Symptoms": constitutionalSymptoms,
       "Trauma History": traumaHistory,
-      "Medication History": medicationHistory,
       "Past Procedures": procedures,
       "Spine Surgeries": {
-        "C-Spine": spineSurgeries["C-Spine"],
-        "L-Spine": spineSurgeries["L-Spine"],
+        "C-Spine": spineSurgeries["Spine Surgeries"],
         "Other": otherSpineSurgeries,
       },
       "Bowel/Bladder Incontinence": bowelBladderIncontinence,
-      "Psychological Status": psychologicalStatus,
-      "Red Flags": redFlags,
+      "Weakness in Limb": isWeaknessInLimb,
+      "Unbearable Pain": unbearablePain,
     };
 
     // Save the data to the provider or session state
