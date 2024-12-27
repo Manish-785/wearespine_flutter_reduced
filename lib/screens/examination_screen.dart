@@ -25,10 +25,6 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
   Map<String, dynamic> rangeOfMotion = {
     'back': {'movements': <String>[], 'pain': null as String?},
     'neck': {'movements': <String>[], 'pain': null as String?},
-    'hip': <String>[],
-    'shoulder': <String>[],
-    'squat': {'can_squat': null as String?, 'pain': null as String?},
-    'trendelenberg': null as String?,
   };
 
   // Provocative Test Section
@@ -39,51 +35,7 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
     },
     'additional_tests': {
       'spurlings': null as String?,
-      'fnst': null as String?,
     },
-  };
-
-  // Power Section
-  Map<String, dynamic> power = {
-    'lower_limbs': {
-      'assessed_areas': <String>[],
-      'foot_weakness': {'status': null as String?, 'picture': null as String?},
-    },
-    'upper_limbs': {
-      'assessed_areas': <String>[],
-      'hand_weakness': {'status': null as String?, 'picture': null as String?},
-    },
-  };
-
-  // Sensory Section
-  Map<String, dynamic> sensory = {
-    'lower_limbs': {
-      'assessed_areas': <String>[],
-      'foot_sensation': {
-        'status': null as String?,
-        'sensation_pic': null as String?,
-        'no_sensation_pic': null as String?
-      },
-    },
-    'upper_limbs': {
-      'assessed_areas': <String>[],
-      'hand_sensation': {
-        'status': null as String?,
-        'sensation_pic': null as String?,
-        'no_sensation_pic': null as String?
-      },
-    },
-  };
-
-  // Reflexes Section
-  Map<String, String?> reflexes = {
-    "Knee Reflex": null as String?,
-    "Ankle Reflex": null as String?,
-    "Plantar": null as String?,
-    "Biceps": null as String?,
-    "Triceps": null as String?,
-    "Supinator": null as String?,
-    "Hoffman": null as String?,
   };
 
   @override
@@ -165,7 +117,7 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
             Image.asset('lib/assets/back_movement.jpg',
                 fit: BoxFit.cover, width: double.infinity),
             _buildMultiSelect(
-                "Select back movements you can perform",
+                "Select back movements you are unable to perform",
                 [
                   "Bending forward",
                   "Bending backwards",
@@ -189,7 +141,7 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
             Image.asset('lib/assets/neck.webp',
                 fit: BoxFit.cover, width: double.infinity),
             _buildMultiSelect(
-                "Select neck movements you can perform",
+                "Select neck movements you are unable to perform",
                 [
                   "Bending forward",
                   "Bending backwards",
@@ -206,69 +158,6 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
                 rangeOfMotion['neck']['pain'], (value) {
               setState(() {
                 rangeOfMotion['neck']['pain'] = value;
-              });
-            }),
-
-            _buildSubheader("2. Hip Joint Movement"),
-            Image.asset('lib/assets/hip_movement.png',
-                fit: BoxFit.cover, width: double.infinity),
-            _buildMultiSelect(
-                "Select hip movements",
-                [
-                  "Flexion extension test",
-                  "Adduction abduction",
-                  "Sitting cross-legged",
-                  "Internal rotation",
-                  "External rotation",
-                  "Faber Test"
-                ],
-                rangeOfMotion['hip'], (value) {
-              setState(() {
-                rangeOfMotion['hip'] = value;
-              });
-            }),
-
-            _buildSubheader("3. Shoulder Test"),
-            Image.asset('lib/assets/shoulder_test.png',
-                fit: BoxFit.cover, width: double.infinity),
-            _buildMultiSelect(
-                "Select shoulder tests",
-                ["Empty can test", "Full can test", "Horn Blowers test"],
-                rangeOfMotion['shoulder'], (value) {
-              setState(() {
-                rangeOfMotion['shoulder'] = value;
-              });
-            }),
-
-            _buildSubheader("4. Partial Squat"),
-            _buildRadio("Can you do a partial squat?", ["Yes", "No"],
-                rangeOfMotion['squat']['can_squat'], (value) {
-              setState(() {
-                rangeOfMotion['squat']['can_squat'] = value;
-              });
-            }),
-            if (rangeOfMotion['squat']['can_squat'] == "Yes")
-              _buildRadio("Is there pain?", ["Yes", "No"],
-                  rangeOfMotion['squat']['pain'], (value) {
-                setState(() {
-                  rangeOfMotion['squat']['pain'] = value;
-                });
-              }),
-
-            _buildSubheader("5. Trendelenberg Test"),
-            Image.asset('lib/assets/trendlenburg.jpeg',
-                fit: BoxFit.cover, width: double.infinity),
-            _buildRadio(
-                "Which leg standing is difficult?",
-                [
-                  "Standing on right leg difficult/not possible",
-                  "Standing on left leg difficult/not possible",
-                  "Neither side possible",
-                  "Can do easily"
-                ],
-                rangeOfMotion['trendelenberg'], (value) {
-              setState(() {
-                rangeOfMotion['trendelenberg'] = value;
               });
             }),
 
@@ -319,198 +208,49 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
             }),
 
             _buildSubheader("2. Additional Tests"),
-            Image.asset('lib/assets/spurling_test.webp',
-                fit: BoxFit.cover, width: double.infinity),
-            _buildRadio("Spurlings Test", ["Positive", "Negative"],
+            Row(
+              children: [
+                Expanded(
+                  child: Image.asset('lib/assets/spurling_test.webp',
+                      fit: BoxFit.cover),
+                ),
+                const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Look at one side then look up and hold there for 5 sec",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            _buildRadio(
+                "Spurlings Test",
+                [
+                  "Right side painful",
+                  "Left side painful",
+                  "No pain",
+                  "Both sides painful"
+                ],
                 provocativeTest['additional_tests']['spurlings'], (value) {
               setState(() {
                 provocativeTest['additional_tests']['spurlings'] = value;
               });
             }),
-            Image.asset('lib/assets/fnst_test.jpg',
-                fit: BoxFit.cover, width: double.infinity),
-            _buildRadio("Femoral Nerve Stretch Test", ["Positive", "Negative"],
-                provocativeTest['additional_tests']['fnst'], (value) {
-              setState(() {
-                provocativeTest['additional_tests']['fnst'] = value;
-              });
-            }),
 
-            // Power Section
-            _buildSectionTitle("Power Test"),
-            _buildSubheader("1. Lower Limbs Power"),
-            _buildMultiSelect(
-                "Select areas with power assessment",
-                ["Hip", "Knee", "Ankle", "Foot"],
-                power['lower_limbs']['assessed_areas'], (value) {
-              setState(() {
-                power['lower_limbs']['assessed_areas'] = value;
-              });
-            }),
-            if (power['lower_limbs']['assessed_areas'].contains("Foot"))
-              _buildRadio("Foot Weakness", ["All okay", "Weakness Present"],
-                  power['lower_limbs']['foot_weakness']['status'], (value) {
-                setState(() {
-                  power['lower_limbs']['foot_weakness']['status'] = value;
-                });
-              }),
-            if (power['lower_limbs']['foot_weakness']['status'] ==
-                "Weakness Present")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  power['lower_limbs']['foot_weakness']['picture'], (value) {
-                setState(() {
-                  power['lower_limbs']['foot_weakness']['picture'] = value;
-                });
-              }),
-
-            _buildSubheader("2. Upper Limbs Power"),
-            _buildMultiSelect(
-                "Select areas with power assessment",
-                ["Shoulder", "Elbow", "Wrist", "Hand/Fingers"],
-                power['upper_limbs']['assessed_areas'], (value) {
-              setState(() {
-                power['upper_limbs']['assessed_areas'] = value;
-              });
-            }),
-            if (power['upper_limbs']['assessed_areas'].contains("Hand/Fingers"))
-              _buildRadio(
-                  "Hand/Fingers Weakness",
-                  ["All okay", "Weakness Present"],
-                  power['upper_limbs']['hand_weakness']['status'], (value) {
-                setState(() {
-                  power['upper_limbs']['hand_weakness']['status'] = value;
-                });
-              }),
-            if (power['upper_limbs']['hand_weakness']['status'] ==
-                "Weakness Present")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  power['upper_limbs']['hand_weakness']['picture'], (value) {
-                setState(() {
-                  power['upper_limbs']['hand_weakness']['picture'] = value;
-                });
-              }),
-
-            // Sensory Section
-            _buildSectionTitle("Sensory Examination"),
-            _buildSubheader("1. Lower Limbs Sensory"),
-            _buildMultiSelect(
-                "Select areas for sensory assessment",
-                ["Hip", "Knee", "Ankle", "Foot"],
-                sensory['lower_limbs']['assessed_areas'], (value) {
-              setState(() {
-                sensory['lower_limbs']['assessed_areas'] = value;
-              });
-            }),
-            _buildRadio(
-                "Foot Sensation",
-                ["All okay", "Different sensation Present", "No sensation"],
-                sensory['lower_limbs']['foot_sensation']['status'], (value) {
-              setState(() {
-                sensory['lower_limbs']['foot_sensation']['status'] = value;
-              });
-            }),
-            if (sensory['lower_limbs']['foot_sensation']['status'] ==
-                "Different sensation Present")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  sensory['lower_limbs']['foot_sensation']['sensation_pic'],
-                  (value) {
-                setState(() {
-                  sensory['lower_limbs']['foot_sensation']['sensation_pic'] =
-                      value;
-                });
-              }),
-            if (sensory['lower_limbs']['foot_sensation']['status'] ==
-                "No sensation")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  sensory['lower_limbs']['foot_sensation']['no_sensation_pic'],
-                  (value) {
-                setState(() {
-                  sensory['lower_limbs']['foot_sensation']['no_sensation_pic'] =
-                      value;
-                });
-              }),
-
-            _buildSubheader("2. Upper Limbs Sensory"),
-            _buildMultiSelect(
-                "Select areas for sensory assessment",
-                ["Shoulder", "Elbow", "Wrist", "Hand/Fingers"],
-                sensory['upper_limbs']['assessed_areas'], (value) {
-              setState(() {
-                sensory['upper_limbs']['assessed_areas'] = value;
-              });
-            }),
-            _buildRadio(
-                "Hand/Fingers Sensation",
-                ["All okay", "Different sensation Present", "No sensation"],
-                sensory['upper_limbs']['hand_sensation']['status'], (value) {
-              setState(() {
-                sensory['upper_limbs']['hand_sensation']['status'] = value;
-              });
-            }),
-            if (sensory['upper_limbs']['hand_sensation']['status'] ==
-                "Different sensation Present")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  sensory['upper_limbs']['hand_sensation']['sensation_pic'],
-                  (value) {
-                setState(() {
-                  sensory['upper_limbs']['hand_sensation']['sensation_pic'] =
-                      value;
-                });
-              }),
-            if (sensory['upper_limbs']['hand_sensation']['status'] ==
-                "No sensation")
-              _buildRadio("Which Picture", ["I", "II", "III", "IV"],
-                  sensory['upper_limbs']['hand_sensation']['no_sensation_pic'],
-                  (value) {
-                setState(() {
-                  sensory['upper_limbs']['hand_sensation']['no_sensation_pic'] =
-                      value;
-                });
-              }),
-
-            // Reflexes Section
-            _buildSectionTitle("Reflexes Examination"),
-            ...reflexes.keys.map((test) {
-              return _buildRadio(
-                  "$test Reflex",
-                  ["Normal", "Hyperactive", "Hypoactive", "Absent"],
-                  reflexes[test], (value) {
-                setState(() {
-                  reflexes[test] = value;
-                });
-              });
-            }).toList(),
-
-            // Navigation Buttons
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to the previous page
-                    Navigator.pop(context);
+                    Navigator.pop(context); // Navigate to the previous screen
                   },
-                  child: const Text("Previous"),
+                  child: const Text("Back"),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // Save the medical examination data
-                    Provider.of<PatientProvider>(context, listen: false)
-                        .saveMedicalExamination({
-                      'gait': {
-                        'walking_pattern': gaitPattern,
-                        'heel_toe': heelToeWalking,
-                        'tandem_walk': tandemWalk,
-                      },
-                      'range_of_motion': rangeOfMotion,
-                      'provocative_test': provocativeTest,
-                      'power': power,
-                      'sensory': sensory,
-                      'reflexes': reflexes,
-                    });
-                    // Navigate to the differential diagnosis page
-                    Navigator.pushNamed(context, '/differential_diagnosis');
-                  },
+                  onPressed: _saveExamination,
                   child: const Text("Continue"),
                 ),
               ],
@@ -582,5 +322,23 @@ class _MedicalExaminationScreenState extends State<MedicalExaminationScreen> {
         ),
       ],
     );
+  }
+
+  void _saveExamination() {
+    // Compile all collected information
+    final examinationData = {
+      "Gait Pattern": gaitPattern,
+      "Heel Toe Walking": heelToeWalking,
+      "Tandem Walk": tandemWalk,
+      "Range of Motion": rangeOfMotion,
+      "Provocative Test": provocativeTest,
+    };
+
+    // Save the data to the provider or session state
+    Provider.of<PatientProvider>(context, listen: false)
+        .saveMedicalExamination(examinationData);
+
+    // Navigate to the next screen
+    Navigator.pushNamed(context, '/compensation');
   }
 }

@@ -30,6 +30,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   bool walkWithSupport = false;
   String? handSkillsChange;
   List<String> bowelBladderSymptoms = [];
+  List<String> additionalConditions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +148,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 aggravatingFactors = values;
               });
             }),
+            _buildSectionTitle("6. Do you have any of the following?"),
+            _buildMultiSelect(
+                "Select Conditions",
+                [
+                  "Imbalance",
+                  "Vertigo",
+                  "Nausea",
+                  "Handwriting or signature changes"
+                ],
+                additionalConditions, (values) {
+              setState(() {
+                additionalConditions = values;
+              });
+            }),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,15 +274,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         "Event": {"Type": event, "Custom Event": customEvent},
       },
       "Aggravating Factors": aggravatingFactors,
+      "Additional Conditions": additionalConditions,
       // Additional fields...
     };
 
     Provider.of<PatientProvider>(context, listen: false)
         .updateHistory(historyData);
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text("History Information Saved Successfully!")),
-    // );
 
     Navigator.pushNamed(context, '/examination');
   }

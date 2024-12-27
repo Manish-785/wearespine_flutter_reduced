@@ -83,12 +83,13 @@ class _CompensationScreenState extends State<CompensationScreen> {
                     // Navigate to the previous page
                     Navigator.pop(context);
                   },
-                  child: const Text("Previous: Differential Diagnosis"),
+                  child: const Text("Back"),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     // Save the compensation data
-                    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+                    final patientProvider =
+                        Provider.of<PatientProvider>(context, listen: false);
                     patientProvider.saveCompensationData({
                       'day_to_day_activities': dayToDayActivities,
                       'current_status': currentStatus,
@@ -104,12 +105,13 @@ class _CompensationScreenState extends State<CompensationScreen> {
                     patientProvider.clearPatientData();
 
                     // Show success message and navigate back to patient profile
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text(
-                              "All patient details successfully saved! You can find the details in 'patient_data.json'.")),
-                    );
-                    Navigator.pushNamedAndRemoveUntil(context, '/personal_info', (route) => false);
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(
+                    //       content: Text(
+                    //           "All patient details successfully saved! You can find the details in 'patient_data.json'.")),
+                    // );
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/personal_info', (route) => false);
                   },
                   child: const Text("Save"),
                 ),
