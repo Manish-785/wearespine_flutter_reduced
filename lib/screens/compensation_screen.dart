@@ -16,6 +16,7 @@ class _CompensationScreenState extends State<CompensationScreen> {
   String? socialEvents;
   List<String> treatmentExpectations = [];
   String? diagnosis;
+  String? advice;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +76,17 @@ class _CompensationScreenState extends State<CompensationScreen> {
               },
             ),
             const SizedBox(height: 20),
+            _buildSectionTitle("Advice"),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "Advice",
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                advice = value;
+              },
+            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -96,6 +108,7 @@ class _CompensationScreenState extends State<CompensationScreen> {
                       'social_events': socialEvents,
                       'treatment_expectations': treatmentExpectations,
                       'diagnosis': diagnosis,
+                      'advice': advice,
                     });
 
                     // Upload data to Dropbox
