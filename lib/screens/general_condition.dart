@@ -19,6 +19,7 @@ class _GeneralConditionScreenState extends State<GeneralConditionScreen> {
     "Rheumatoid Arthritis": false,
     "Ankylosing Spondylitis": false,
     "Osteoporosis": false,
+    "Hypertension": false,
   };
 
   // Constitutional Symptoms

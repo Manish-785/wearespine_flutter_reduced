@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/patient_provider.dart';
+import 'package:flutter_image_map/flutter_image_map.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({Key? key}) : super(key: key);
@@ -27,10 +28,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String? dailyActivities;
   List<String> additionalSymptoms = [];
   bool fallsDueToImbalance = false;
+  bool isBackView = false;
   bool walkWithSupport = false;
   String? handSkillsChange;
   List<String> bowelBladderSymptoms = [];
   List<String> additionalConditions = [];
+  String? hoveredRegion;
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +44,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: ListView(
           children: [
             _buildSectionTitle("1. Site"),
-            _buildDropdown(
-                "Select Site",
-                [
-                  "Select",
-                  "Cervical Spine",
-                  "Thoracic Spine",
-                  "Lumbar Spine",
-                  "Sacral Spine",
-                  "Shoulder",
-                  "Elbow",
-                  "Wrist",
-                  "Hip",
-                  "Knee",
-                  "Ankle"
-                ],
-                site, (value) {
-              setState(() {
-                site = value;
-              });
-            }),
+            _buildClickableBody(),
+            Text("Selected Site: ${site ?? 'None'}"),
             _buildSectionTitle("2. Duration"),
             _buildRadio(
                 "Pain Duration",
@@ -182,6 +167,330 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildClickableBody() {
+    return Column(
+      children: [
+        const Text('Click on the body to select the site of pain'),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              isBackView = !isBackView;
+            });
+          },
+          child: Text(isBackView ? 'Show Front View' : 'Show Back View'),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 500,
+          width: 300,
+          child: Stack(
+            children: [
+              MouseRegion(
+                onHover: (event) {
+                  // Get the relative position within the widget
+                  final RenderBox box = context.findRenderObject() as RenderBox;
+                  final localPosition = box.globalToLocal(event.position);
+
+                  // Check which region contains this point
+                  for (var region
+                      in isBackView ? backBodyRegions() : frontBodyRegions()) {
+                    if (region.path.contains(localPosition)) {
+                      setState(() {
+                        hoveredRegion = region.title;
+                      });
+                      break;
+                    }
+                  }
+                },
+                onExit: (_) {
+                  setState(() {
+                    hoveredRegion = null;
+                  });
+                },
+                child: ImageMap(
+                  image: Image.asset(
+                    isBackView ? 'lib/assets/back.png' : 'lib/assets/front.png',
+                    fit: BoxFit.contain,
+                  ),
+                  onTap: (area) {
+                    setState(() {
+                      site = area.title;
+                    });
+                  },
+                  regions: isBackView ? backBodyRegions() : frontBodyRegions(),
+                ),
+              ),
+              if (hoveredRegion != null)
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      hoveredRegion!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  List<ImageMapRegion> frontBodyRegions() {
+    return [
+      ImageMapRegion(
+        title: 'Neck',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(110, 100, 100, 50)),
+        color: hoveredRegion == 'Neck'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Shoulder',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(25, 100, 80, 100)),
+        color: hoveredRegion == 'Right Shoulder'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Bicep',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(20, 200, 80, 80)),
+        color: hoveredRegion == 'Right Bicep'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Forearm',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(20, 280, 80, 80)),
+        color: hoveredRegion == 'Right Forearm'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Hand',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(20, 360, 80, 80)),
+        color: hoveredRegion == 'Right Hand'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Shoulder',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(200, 100, 80, 100)),
+        color: hoveredRegion == 'Left Shoulder'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Bicep',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(220, 200, 80, 80)),
+        color: hoveredRegion == 'Left Bicep'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Forearm',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(220, 280, 80, 80)),
+        color: hoveredRegion == 'Left Forearm'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Hand',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(220, 360, 80, 80)),
+        color: hoveredRegion == 'Left Hand'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Groin',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(120, 330, 80, 80)),
+        color: hoveredRegion == 'Groin'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Thigh',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(160, 400, 100, 100)),
+        color: hoveredRegion == 'Left Thigh'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Thigh',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(60, 400, 100, 100)),
+        color: hoveredRegion == 'Right Thigh'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Knee',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(200, 500, 60, 60)),
+        color: hoveredRegion == 'Left Knee'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Knee',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(80, 500, 60, 60)),
+        color: hoveredRegion == 'Right Knee'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Leg',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(200, 560, 60, 130)),
+        color: hoveredRegion == 'Left Leg'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Leg',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(80, 560, 60, 130)),
+        color: hoveredRegion == 'Right Leg'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Foot',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(200, 690, 70, 50)),
+        color: hoveredRegion == 'Left Foot'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Foot',
+        shape: ImageMapShape.rect,
+        path: Path()..addRect(Rect.fromLTWH(80, 690, 70, 50)),
+        color: hoveredRegion == 'Right Foot'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+    ];
+  }
+
+  List<ImageMapRegion> backBodyRegions() {
+    return [
+      ImageMapRegion(
+        title: 'Upper Back',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(100, 100, 130, 90)),
+        color: hoveredRegion == 'Upper Back'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Middle Back',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(100, 190, 140, 90)),
+        color: hoveredRegion == 'Middle Back'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Lower Back',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(100, 280, 140, 60)),
+        color: hoveredRegion == 'Lower Back'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Glute',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(80, 340, 85, 80)),
+        color: hoveredRegion == 'Right Glute'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Glute',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(175, 340, 80, 80)),
+        color: hoveredRegion == 'Left Glute'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Hamstring',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(80, 420, 85, 100)),
+        color: hoveredRegion == 'Right Hamstring'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Hamstring',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(175, 420, 80, 100)),
+        color: hoveredRegion == 'Left Hamstring'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Calves',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(65, 540, 80, 125)),
+        color: hoveredRegion == 'Right Calves'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Calves',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(175, 540, 80, 125)),
+        color: hoveredRegion == 'Left Calves'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Right Heel',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(65, 665, 60, 70)),
+        color: hoveredRegion == 'Right Heel'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+      ImageMapRegion(
+        title: 'Left Heel',
+        shape: ImageMapShape.circle,
+        path: Path()..addRect(Rect.fromLTWH(180, 665, 60, 70)),
+        color: hoveredRegion == 'Left Heel'
+            ? Colors.red.withOpacity(0.3)
+            : Colors.transparent,
+      ),
+    ];
   }
 
   Widget _buildSectionTitle(String title) {

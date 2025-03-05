@@ -113,7 +113,7 @@ class _CompensationScreenState extends State<CompensationScreen> {
 
                     // Upload data to Dropbox
                     await uploadToApi(patientProvider.patientData);
-
+                    // print(patientProvider.patientData);
                     // Clear patient data
                     patientProvider.clearPatientData();
 

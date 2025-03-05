@@ -40,6 +40,7 @@ dependencies:
   html: ^0.15.5
   http: ^1.2.2
   postgres: ^2.3.2
+  flutter_image_map: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +75,8 @@ flutter:
     - lib/assets/leg_raising_test.png
     - lib/assets/spurling_test.webp
     - lib/assets/fnst_test.jpg
+    - lib/assets/front.png
+    - lib/assets/back.png
 
 
   # To add assets to your application, add an assets section, like this:

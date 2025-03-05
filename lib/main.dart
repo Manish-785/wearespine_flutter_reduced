@@ -7,7 +7,6 @@ import 'providers/patient_provider.dart';
 import 'screens/personal_info_screen.dart';
 import 'screens/medical_history_screen.dart';
 import 'screens/symptoms_screen.dart';
-import 'screens/differential_diagnosis_screen.dart';
 
 void main() {
   runApp(
@@ -36,7 +35,7 @@ class MedicalDiagnosisApp extends StatelessWidget {
         '/medical_history': (context) => HistoryScreen(),
         '/symptoms': (context) => SymptomsScreen(),
         '/general_condition': (context) => GeneralConditionScreen(),
-        '/differential_diagnosis': (context) => DifferentialDiagnosisScreen(),
+        // '/differential_diagnosis': (context) => DifferentialDiagnosisScreen(),
         '/examination': (context) => MedicalExaminationScreen(),
         '/compensation': (context) => CompensationScreen(),
       },
